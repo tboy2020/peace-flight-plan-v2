@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Flight Plan v2 &mdash; From Here to the Flight Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky-space:#0B1E33;--sky-deep:#12293F;--sky-mid:#1B3A5B;
+    --dawn:#E8A44C;--dawn-soft:#F2C078;--brass:#C9A24B;--brass-lite:#E4C877;
+    --verd:#3E7C74;--verd-lite:#5CA399;--cloud:#F5F7FA;--panel:#FBFAF5;
+    --ink:#12222E;--ink-soft:#3C5064;--line:rgba(255,255,255,.14);
+    --shadow:0 18px 44px rgba(3,12,22,.45);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;color:var(--cloud);background:var(--sky-space);
+    background-image:radial-gradient(1200px 600px at 50% -10%, rgba(232,164,76,.10), transparent 60%),
+      linear-gradient(180deg,#0A1B2E 0%,#0E2740 42%,#12293F 100%);
+    min-height:100vh;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  .stars{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.7}
+  .stars i{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;opacity:.5;animation:tw 4s ease-in-out infinite}
+  @keyframes tw{0%,100%{opacity:.15}50%{opacity:.8}}
+  .wrap{position:relative;z-index:2;max-width:760px;margin:0 auto;padding:0 16px 120px}
+
+  /* COVER */
+  #cover{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;
+    background:radial-gradient(900px 520px at 50% 118%, rgba(232,164,76,.55), rgba(232,164,76,0) 60%),linear-gradient(180deg,#091626 0%,#0F2A46 60%,#173A5C 100%)}
+  .cover-in{max-width:520px;animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+  .wings{font-size:46px;line-height:1;color:var(--brass-lite);filter:drop-shadow(0 6px 14px rgba(0,0,0,.4))}
+  .cover-eyebrow{font-family:'Saira Condensed',sans-serif;letter-spacing:.34em;text-transform:uppercase;font-size:12px;color:var(--dawn-soft);margin:18px 0 6px}
+  .cover h1{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:clamp(40px,12vw,68px);line-height:.94;margin:0}
+  .cover h1 span{color:var(--brass-lite)}
+  .cover-sub{color:#cdddec;font-size:15px;line-height:1.5;margin:14px auto 4px;max-width:400px}
+  .verse{font-family:'Fraunces',Georgia,serif;font-style:italic;color:#f4e6cf;font-size:16px;line-height:1.55;margin:22px auto 2px;max-width:430px}
+  .verse b{display:block;font-family:'Saira Condensed',sans-serif;font-style:normal;font-weight:600;letter-spacing:.2em;font-size:11px;color:var(--dawn-soft);margin-top:8px;text-transform:uppercase}
+  .field{margin:20px auto 0;max-width:360px;text-align:left}
+  .field label{display:block;font-family:'Saira Condensed',sans-serif;letter-spacing:.16em;text-transform:uppercase;font-size:11px;color:#a9c2d6;margin:14px 4px 6px}
+  .field input{width:100%;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:#fff;font-size:16px;font-family:inherit}
+  .field input:focus{outline:none;border-color:var(--brass);background:rgba(255,255,255,.1)}
+  .btn{cursor:pointer;border:none;font-family:'Saira Condensed',sans-serif;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
+  .btn-go{display:inline-block;margin-top:24px;padding:15px 40px;border-radius:999px;font-size:16px;color:#231a06;background:linear-gradient(180deg,var(--brass-lite),var(--brass));box-shadow:0 10px 26px rgba(201,162,75,.4)}
+  .btn-go:active{transform:translateY(1px)}
+
+  /* HERO */
+  .hero{position:relative;padding:30px 20px 26px;margin:16px 0 6px;border-radius:22px;overflow:hidden;background:linear-gradient(180deg,#0f2a46 0%,#173a5c 100%);border:1px solid var(--line);box-shadow:var(--shadow)}
+  .hero:before{content:"";position:absolute;left:-10%;right:-10%;bottom:-40%;height:80%;background:radial-gradient(closest-side, rgba(232,164,76,.5), rgba(232,164,76,0));pointer-events:none}
+  .cloud{position:absolute;background:rgba(255,255,255,.07);border-radius:40px;filter:blur(2px);pointer-events:none}
+  .c1{width:120px;height:26px;top:26px;left:-40px;animation:drift 26s linear infinite}
+  .c2{width:80px;height:18px;top:64px;right:-30px;animation:drift 34s linear infinite reverse}
+  @keyframes drift{from{transform:translateX(0)}to{transform:translateX(60px)}}
+  .hero-top{position:relative;display:flex;align-items:center;gap:10px;z-index:2}
+  .hero-wings{font-size:26px;color:var(--brass-lite)}
+  .tail{font-family:'Saira Condensed',sans-serif;letter-spacing:.18em;font-size:12px;color:#bcd2e5;border:1px solid rgba(255,255,255,.22);padding:5px 10px;border-radius:8px;background:rgba(0,0,0,.16)}
+  .edit{margin-left:auto;background:rgba(255,255,255,.08);border:1px solid var(--line);color:#cfe0ef;border-radius:9px;padding:7px 11px;font-size:12px;cursor:pointer;font-family:'Saira Condensed',sans-serif;letter-spacing:.12em}
+  .hero h2{position:relative;z-index:2;font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:clamp(30px,8.5vw,46px);line-height:.96;margin:16px 0 2px}
+  .hero h2 small{display:block;font-size:14px;letter-spacing:.28em;color:var(--dawn-soft);font-weight:600;margin-bottom:4px}
+  .hero-air{position:relative;z-index:2;font-family:'Fraunces',serif;font-style:italic;color:#f2e3ca;font-size:15px;margin-top:6px}
+  .gauge{position:relative;z-index:2;margin-top:18px}
+  .gauge-top{display:flex;justify-content:space-between;align-items:baseline;font-family:'Saira Condensed',sans-serif;letter-spacing:.14em;font-size:12px;color:#bcd2e5;text-transform:uppercase}
+  .gauge-top b{color:var(--brass-lite);font-size:15px}
+  .bar{height:12px;border-radius:999px;background:rgba(0,0,0,.28);margin-top:8px;overflow:hidden;border:1px solid rgba(255,255,255,.12)}
+  .bar > i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--verd-lite),var(--brass-lite),var(--dawn));transition:width .8s cubic-bezier(.2,.7,.2,1)}
+
+  /* TABS */
+  .tabs{position:sticky;top:0;z-index:20;display:flex;gap:6px;padding:10px 4px;margin:8px -4px 6px;overflow-x:auto;background:linear-gradient(180deg,rgba(10,22,38,.96),rgba(10,22,38,.7));backdrop-filter:blur(8px);scrollbar-width:none}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex:0 0 auto;cursor:pointer;border:1px solid var(--line);background:rgba(255,255,255,.05);color:#c4d6e6;font-family:'Saira Condensed',sans-serif;font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:13px;padding:10px 15px;border-radius:11px;white-space:nowrap;transition:.2s}
+  .tab.on{background:linear-gradient(180deg,var(--brass-lite),var(--brass));color:#231a06;border-color:transparent}
+  .view{display:none;animation:fade .35s ease both}
+  .view.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .lead{font-family:'Fraunces',serif;font-style:italic;font-size:16px;line-height:1.5;color:#e7eef5;margin:14px 6px 20px}
+
+  /* FLIGHT PATH */
+  .leg{position:relative;padding-left:58px;margin-bottom:18px}
+  .spine{position:absolute;left:22px;top:6px;bottom:-18px;width:2px;background:linear-gradient(180deg,var(--brass),rgba(201,162,75,.15))}
+  .leg:last-child .spine{display:none}
+  .node{position:absolute;left:6px;top:2px;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;background:radial-gradient(circle at 35% 30%, #2c4d6d, #12293f);border:2px solid var(--brass);color:var(--brass-lite);z-index:2}
+  .leg.done .node{background:linear-gradient(180deg,var(--brass-lite),var(--brass));color:#231a06;border-color:var(--brass-lite);box-shadow:0 0 0 4px rgba(201,162,75,.18)}
+  .here{position:absolute;left:-4px;top:40px;font-family:'Saira Condensed',sans-serif;font-size:10px;letter-spacing:.14em;color:#231a06;background:var(--dawn-soft);padding:3px 7px;border-radius:6px;font-weight:700;white-space:nowrap;box-shadow:0 6px 14px rgba(0,0,0,.3);animation:bob 2.4s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+  .card{position:relative;background:var(--panel);color:var(--ink);border-radius:16px;padding:18px 18px 8px;box-shadow:var(--shadow)}
+  .card .fl{position:absolute;top:-11px;right:14px;font-family:'Saira Condensed',sans-serif;font-weight:700;letter-spacing:.12em;font-size:12px;color:#231a06;background:linear-gradient(180deg,var(--brass-lite),var(--brass));padding:4px 10px;border-radius:8px}
+  .card h3{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:22px;margin:2px 0 3px;color:var(--ink)}
+  .meta{font-family:'Saira Condensed',sans-serif;letter-spacing:.06em;font-size:12.5px;color:var(--verd);text-transform:uppercase;margin-bottom:12px}
+  .meta em{color:var(--ink-soft);font-style:normal}
+  .item{display:flex;gap:12px;align-items:center;padding:11px 4px;border-top:1px solid #ece7d8;cursor:pointer}
+  .item:first-of-type{border-top:none}
+  .box{flex:0 0 auto;width:24px;height:24px;border-radius:7px;border:2px solid #c7bfa6;position:relative;transition:.15s}
+  .item.tick .box{background:linear-gradient(180deg,var(--verd-lite),var(--verd));border-color:var(--verd)}
+  .item.tick .box:after{content:"";position:absolute;left:7px;top:2px;width:6px;height:12px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(43deg)}
+  .item .txt{flex:1;font-size:15px;line-height:1.4;color:var(--ink)}
+  .item.tick .txt{color:#8a9299;text-decoration:line-through}
+  .item .note{display:block;font-size:12.5px;color:var(--verd);margin-top:3px;font-weight:600;text-decoration:none}
+  .chev{flex:0 0 auto;color:var(--brass);font-size:22px;font-weight:700;opacity:.75}
+  .scrip{margin:8px 0 12px;padding:13px 15px;border-left:3px solid var(--brass);background:rgba(62,124,116,.08);border-radius:0 12px 12px 0}
+  .scrip p{font-family:'Fraunces',serif;font-style:italic;font-size:15px;line-height:1.5;color:#294a3f;margin:0}
+  .scrip b{display:block;font-family:'Saira Condensed',sans-serif;font-style:normal;letter-spacing:.16em;font-size:11px;color:var(--verd);margin-top:7px;text-transform:uppercase}
+  .say{margin-top:9px;background:none;border:1px solid var(--verd);color:var(--verd);border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'Saira Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase}
+  .stamp{position:absolute;right:14px;bottom:14px;font-family:'Saira Condensed',sans-serif;font-weight:700;letter-spacing:.14em;font-size:13px;color:#b1442f;border:2.5px solid #b1442f;border-radius:9px;padding:4px 10px;transform:rotate(-11deg);opacity:0;transition:.3s}
+  .card.cleared .stamp{opacity:.85}
+
+  /* MATH */
+  .ladder .item{border-top:none;background:var(--panel);border-radius:13px;margin-bottom:9px;padding:14px 15px;color:var(--ink);box-shadow:0 10px 24px rgba(3,12,22,.28)}
+  .ladder .rung-h{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:19px;color:var(--ink)}
+  .ladder .why{font-size:13px;color:var(--ink-soft);margin-top:2px;line-height:1.4}
+  .gate{font-family:'Saira Condensed',sans-serif;font-size:10px;letter-spacing:.12em;color:#231a06;background:var(--dawn-soft);padding:2px 7px;border-radius:6px;margin-left:8px;vertical-align:middle}
+
+  /* LAUNCHPAD */
+  .now{font-family:'Saira Condensed',sans-serif;letter-spacing:.14em;text-transform:uppercase;font-size:11px;color:#231a06;background:var(--dawn-soft);display:inline-block;padding:4px 10px;border-radius:7px;margin:0 0 6px 2px;font-weight:700}
+  .res{background:var(--panel);color:var(--ink);border-radius:15px;padding:16px 17px;margin-bottom:13px;box-shadow:var(--shadow)}
+  .res h4{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:18px;margin:0 0 2px;color:var(--ink)}
+  .res .tagline{font-family:'Saira Condensed',sans-serif;letter-spacing:.06em;font-size:12px;color:var(--verd);text-transform:uppercase;margin-bottom:8px}
+  .res p{font-size:14px;line-height:1.5;color:#324454;margin:0 0 10px}
+  .res .fact{font-size:13px;color:var(--ink-soft);margin:0 0 4px;padding-left:20px;position:relative}
+  .res .fact:before{content:"\2708";position:absolute;left:0;top:0;color:var(--brass)}
+  .res a{display:inline-block;margin-top:8px;font-family:'Saira Condensed',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:13px;color:#231a06;text-decoration:none;background:linear-gradient(180deg,var(--brass-lite),var(--brass));padding:9px 16px;border-radius:9px}
+
+  /* DREAM */
+  .dream-head{background:linear-gradient(180deg,#173a5c,#0f2a46);border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:16px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .dream-head:before{content:"\2605";position:absolute;top:-12px;right:8px;font-size:120px;color:rgba(228,200,119,.09);line-height:1}
+  .dream-head h3{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:26px;margin:0 0 6px;color:var(--brass-lite)}
+  .dream-head p{font-size:14.5px;line-height:1.55;color:#dce8f2;margin:0}
+  .dstep{background:var(--panel);color:var(--ink);border-radius:14px;padding:15px 16px 15px 54px;position:relative;margin-bottom:11px;box-shadow:0 12px 26px rgba(3,12,22,.3)}
+  .dstep .num{position:absolute;left:14px;top:14px;width:28px;height:28px;border-radius:50%;font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;color:#231a06;background:linear-gradient(180deg,var(--brass-lite),var(--brass))}
+  .dstep h5{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:17px;margin:0 0 3px;color:var(--ink)}
+  .dstep p{font-size:13.5px;line-height:1.5;color:#324454;margin:0}
+
+  /* PARENT */
+  .pgate,.ppanel{background:var(--panel);color:var(--ink);border-radius:16px;padding:20px;box-shadow:var(--shadow)}
+  .pgate h3,.ppanel h3{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:20px;margin:0 0 10px;color:var(--ink)}
+  .pgate p{font-size:14px;color:#324454;line-height:1.5}
+  .pin-in{width:130px;text-align:center;letter-spacing:.5em;font-size:20px;padding:12px;border-radius:11px;border:2px solid #c7bfa6;font-family:'Saira Condensed',sans-serif}
+  .pin-in:focus{outline:none;border-color:var(--brass)}
+  .pbtn{margin-left:8px;padding:12px 20px;border-radius:11px;color:#231a06;background:linear-gradient(180deg,var(--brass-lite),var(--brass));font-size:14px}
+  .prow{display:flex;align-items:center;gap:10px;padding:12px 0;border-top:1px solid #ece7d8;font-size:14px;color:var(--ink)}
+  .prow label{font-family:'Saira Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;font-size:12px;color:var(--ink-soft);flex:1}
+  .prow input{width:80px;padding:9px;border-radius:9px;border:2px solid #c7bfa6;font-size:15px;text-align:center;font-family:inherit}
+  .reset{margin-top:14px;background:none;border:1px solid #b1442f;color:#b1442f;border-radius:10px;padding:10px 16px;font-size:12px;cursor:pointer;font-family:'Saira Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase}
+  .hide{display:none!important}
+  .footer{text-align:center;margin-top:26px;font-family:'Saira Condensed',sans-serif;letter-spacing:.2em;font-size:11px;color:#6f89a1;text-transform:uppercase}
+
+  /* ---------- BRIEF SCREEN ---------- */
+  .brief-screen{position:fixed;inset:0;z-index:70;background:linear-gradient(180deg,#0c2038 0%,#0f2a46 100%);
+    transform:translateX(100%);transition:transform .32s cubic-bezier(.2,.7,.2,1);display:flex;flex-direction:column}
+  .brief-screen.open{transform:none}
+  .brief-bar{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:16px 16px 10px;border-bottom:1px solid var(--line);background:rgba(9,20,34,.6)}
+  .back{background:rgba(255,255,255,.08);border:1px solid var(--line);color:#eaf0f6;border-radius:10px;padding:9px 14px;font-family:'Saira Condensed',sans-serif;font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:13px;cursor:pointer}
+  .brief-fl{margin-left:auto;font-family:'Saira Condensed',sans-serif;font-weight:700;letter-spacing:.12em;font-size:12px;color:#231a06;background:linear-gradient(180deg,var(--brass-lite),var(--brass));padding:5px 11px;border-radius:8px}
+  .brief-body{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:20px 18px 28px;max-width:760px;width:100%;margin:0 auto}
+  .brief-eyebrow{font-family:'Saira Condensed',sans-serif;letter-spacing:.16em;text-transform:uppercase;font-size:12px;color:var(--dawn-soft)}
+  .brief-title{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:clamp(26px,7vw,36px);line-height:1.02;margin:6px 0 4px;color:#fff}
+  .brief-meta{font-family:'Saira Condensed',sans-serif;letter-spacing:.06em;font-size:12.5px;color:var(--verd-lite);text-transform:uppercase;margin-bottom:16px}
+  .blk{background:rgba(255,255,255,.055);border:1px solid var(--line);border-radius:14px;padding:15px 16px;margin-bottom:13px}
+  .blk-h{font-family:'Saira Condensed',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px;color:var(--brass-lite);margin:0 0 9px;display:flex;align-items:center;gap:7px}
+  .blk p{margin:0;font-size:15px;line-height:1.55;color:#e6eef6}
+  .blk ol{margin:0;padding-left:20px}
+  .blk ol li{font-size:14.5px;line-height:1.5;color:#e6eef6;margin-bottom:7px}
+  .factline{display:flex;gap:9px;align-items:flex-start;font-size:14px;color:#dce6f0;margin-bottom:7px;line-height:1.45}
+  .factline:last-child{margin-bottom:0}
+  .factline b{color:var(--brass-lite);flex:0 0 auto}
+  /* cost */
+  .costrow{margin-bottom:11px}
+  .costrow:last-child{margin-bottom:0}
+  .costrow .cl{display:flex;justify-content:space-between;font-size:14px;color:#e6eef6;margin-bottom:4px}
+  .costrow .cl b{color:var(--brass-lite);font-family:'Saira Condensed',sans-serif;letter-spacing:.03em}
+  .costbar{height:9px;border-radius:6px;background:rgba(0,0,0,.3);overflow:hidden}
+  .costbar > i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,var(--verd),var(--brass))}
+  .cost-total{margin-top:12px;padding-top:11px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;font-family:'Saira Condensed',sans-serif;font-size:16px;color:#fff}
+  .cost-total b{color:var(--dawn-soft)}
+  .cost-note{font-size:12.5px;color:#a9c2d6;margin-top:8px;line-height:1.45}
+  /* quiz */
+  .q{margin-bottom:15px}
+  .q:last-child{margin-bottom:0}
+  .q .qq{font-size:15px;font-weight:600;color:#fff;margin-bottom:9px;line-height:1.4}
+  .opt{display:block;width:100%;text-align:left;background:rgba(255,255,255,.05);border:1px solid var(--line);color:#e6eef6;border-radius:10px;padding:11px 13px;margin-bottom:7px;font-size:14.5px;cursor:pointer;font-family:inherit;transition:.15s}
+  .opt.correct{background:rgba(62,124,116,.35);border-color:var(--verd-lite);color:#fff}
+  .opt.wrong{background:rgba(177,68,47,.28);border-color:#c96a56}
+  .opt:disabled{cursor:default}
+  .qex{font-size:13px;color:#bcd2e5;margin-top:7px;line-height:1.45;display:none}
+  .qex.show{display:block}
+  /* map */
+  .map{width:100%;height:220px;border:1px solid var(--line);border-radius:12px;background:#0a1626}
+  .maplink{display:inline-block;margin-top:10px;font-family:'Saira Condensed',sans-serif;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:13px;color:#231a06;text-decoration:none;background:linear-gradient(180deg,var(--brass-lite),var(--brass));padding:9px 15px;border-radius:9px}
+  /* links */
+  .lnk{display:inline-block;margin:0 8px 8px 0;font-family:'Saira Condensed',sans-serif;font-weight:600;letter-spacing:.05em;font-size:14px;color:#eaf0f6;text-decoration:none;background:rgba(255,255,255,.06);border:1px solid var(--line);padding:10px 14px;border-radius:10px}
+  .lnk:after{content:" \2197";color:var(--brass-lite)}
+  /* moment */
+  .moment{text-align:center;padding:26px 18px;border-radius:16px;margin-bottom:14px;background:radial-gradient(600px 260px at 50% 0%, rgba(232,164,76,.28), transparent 70%),linear-gradient(180deg,#12314f,#0f2a46);border:1px solid var(--brass)}
+  .moment .mi{font-size:46px;line-height:1;color:var(--brass-lite)}
+  .moment h4{font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:24px;color:#fff;margin:10px 0 6px}
+  .moment p{font-family:'Fraunces',serif;font-style:italic;font-size:15px;color:#f2e3ca;margin:0;line-height:1.5}
+  .brief-scrip{background:rgba(62,124,116,.14);border-left:3px solid var(--brass);border-radius:0 12px 12px 0;padding:14px 15px;margin-bottom:13px}
+  .brief-scrip p{font-family:'Fraunces',serif;font-style:italic;font-size:15px;color:#e9f0e9;margin:0;line-height:1.5}
+  .brief-scrip b{display:block;font-family:'Saira Condensed',sans-serif;font-style:normal;letter-spacing:.14em;font-size:11px;color:var(--brass-lite);margin-top:7px;text-transform:uppercase}
+  .brief-foot{flex:0 0 auto;padding:14px 16px calc(16px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:rgba(9,20,34,.75)}
+  .complete-btn{width:100%;max-width:730px;margin:0 auto;display:block;padding:15px;border-radius:13px;font-family:'Saira Condensed',sans-serif;font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:15px;cursor:pointer;border:none}
+  .complete-btn.todo{color:#231a06;background:linear-gradient(180deg,var(--brass-lite),var(--brass))}
+  .complete-btn.did{color:#eaf0f6;background:rgba(62,124,116,.3);border:1px solid var(--verd-lite)}
+
+  #toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(30px);z-index:80;background:linear-gradient(180deg,var(--brass-lite),var(--brass));color:#231a06;font-family:'Saira Condensed',sans-serif;font-weight:700;letter-spacing:.06em;padding:12px 20px;border-radius:12px;box-shadow:0 14px 30px rgba(0,0,0,.4);opacity:0;transition:.35s;font-size:14px;max-width:88%;text-align:center}
+  #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  #cfx{position:fixed;inset:0;pointer-events:none;z-index:75}
+  @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars" aria-hidden="true"></div>
+
+<!-- COVER -->
+<section id="cover">
+  <div class="cover-in">
+    <div class="wings">&#9992;</div>
+    <div class="cover-eyebrow">Write the vision</div>
+    <h1>FLIGHT<br><span>PLAN</span></h1>
+    <p class="cover-sub">From the classroom in Columbus to the flight deck &mdash; and one day, the owner&rsquo;s chair. Tap any step to open its briefing.</p>
+    <div class="verse">&ldquo;For I know the thoughts that I think toward you, saith the LORD, thoughts of peace, and not of evil, to give you an expected end.&rdquo;<b>Jeremiah 29:11</b></div>
+    <div class="field">
+      <label for="nm">Future captain, what is your name?</label>
+      <input id="nm" type="text" placeholder="Enter your name" autocomplete="off" />
+      <label for="ar">Name your future airline (you can change this later)</label>
+      <input id="ar" type="text" placeholder="e.g. Peace Air" autocomplete="off" />
+    </div>
+    <button class="btn btn-go" id="begin">Begin the climb</button>
+  </div>
+</section>
+
+<div class="wrap" id="app" style="display:none">
+  <div class="hero">
+    <div class="cloud c1"></div><div class="cloud c2"></div>
+    <div class="hero-top"><span class="hero-wings">&#9992;</span><span class="tail" id="tail">N&mdash;&mdash;&mdash;</span><button class="edit" id="editBtn">Edit</button></div>
+    <h2><small>Captain</small><span id="heroName">&nbsp;</span></h2>
+    <div class="hero-air" id="heroAir"></div>
+    <div class="gauge"><div class="gauge-top"><span>Mission progress</span><b id="pct">0%</b></div><div class="bar"><i id="barFill"></i></div></div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab on" data-v="path">Flight Path</button>
+    <button class="tab" data-v="math">Math Ladder</button>
+    <button class="tab" data-v="launch">Launchpad</button>
+    <button class="tab" data-v="dream">The Dream</button>
+    <button class="tab" data-v="parent">Parent</button>
+  </div>
+
+  <div class="view on" id="v-path">
+    <p class="lead">Every pilot flies a checklist. Tap a step to open its full briefing &mdash; the why, the how, the cost, and the next move. Tick the box when it&rsquo;s done.</p>
+    <div id="legs"></div>
+  </div>
+
+  <div class="view" id="v-math">
+    <p class="lead">Math is the spine of flight. Tap a rung to see why it matters and where to practice.</p>
+    <div class="ladder" id="rungs"></div>
+    <div class="scrip" style="margin-top:16px"><p>&ldquo;Study to shew thyself approved unto God, a workman that needeth not to be ashamed.&rdquo;</p><b>2 Timothy 2:15</b></div>
+  </div>
+
+  <div class="view" id="v-launch">
+    <p class="lead">The dream is far, but the first step is this month &mdash; right here in Columbus.</p>
+    <div id="resList"></div>
+  </div>
+
+  <div class="view" id="v-dream">
+    <div class="dream-head"><h3>The Owner&rsquo;s Chair</h3><p>Becoming a pilot gets you the wings. Owning an airline is a second climb &mdash; from flying the line to running it. Here is the flight plan for that.</p></div>
+    <div id="dreamSteps"></div>
+    <div class="scrip" style="margin-top:6px"><p>&ldquo;But thou shalt remember the LORD thy God: for it is he that giveth thee power to get wealth.&rdquo;</p><b>Deuteronomy 8:18</b></div>
+  </div>
+
+  <div class="view" id="v-parent">
+    <div class="pgate" id="pgate">
+      <h3>Parent access</h3>
+      <p>Enter the family PIN to set the current age and manage the plan.</p>
+      <div style="margin-top:12px"><input class="pin-in" id="pin" type="password" inputmode="numeric" maxlength="4" placeholder="&bull;&bull;&bull;&bull;" /><button class="btn pbtn" id="pinBtn">Enter</button></div>
+    </div>
+    <div class="ppanel hide" id="ppanel">
+      <h3>Flight controls</h3>
+      <div class="prow"><label for="ageSet">Current age (the plane climbs with this)</label><input id="ageSet" type="number" min="8" max="40" /></div>
+      <div class="prow" style="border-top:none;color:#324454;font-size:13px;line-height:1.5">Grade placement can differ from age at a mastery school &mdash; that&rsquo;s fine. The FAA milestones follow age, so age is what moves the plane.</div>
+      <div class="prow"><label>Milestones cleared</label><b id="pDone">0</b></div>
+      <div class="prow"><label>Math rungs climbed</label><b id="pMath">0</b></div>
+      <button class="reset" id="resetBtn">Reset all progress</button>
+    </div>
+  </div>
+
+  <div class="footer">Soli Deo Gloria &middot; Flight Plan v2</div>
+</div>
+
+<!-- BRIEF SCREEN -->
+<div class="brief-screen" id="brief" aria-hidden="true">
+  <div class="brief-bar"><button class="back" id="backBtn">&larr; Back</button><span class="brief-fl" id="briefFl"></span></div>
+  <div class="brief-body" id="briefBody"></div>
+  <div class="brief-foot"><button class="complete-btn todo" id="completeBtn">Mark complete</button></div>
+</div>
+
+<div id="toast"></div>
+<canvas id="cfx"></canvas>
+
+<script>
+/* ---------- storage ---------- */
+function lsGet(k){try{return window.localStorage.getItem(k);}catch(e){return null;}}
+function lsSet(k,v){try{window.localStorage.setItem(k,v);}catch(e){}}
+var K={name:'wop2_name',air:'wop2_air',age:'wop2_age',done:'wop2_done',math:'wop2_math'};
+var state={name:'',air:'',age:12,done:{},math:{}};
+function loadState(){
+  state.name=lsGet(K.name)||'';state.air=lsGet(K.air)||'';
+  var a=parseInt(lsGet(K.age),10);state.age=(a>0?a:12);
+  try{state.done=JSON.parse(lsGet(K.done)||'{}');}catch(e){state.done={};}
+  try{state.math=JSON.parse(lsGet(K.math)||'{}');}catch(e){state.math={};}
+}
+function saveDone(){lsSet(K.done,JSON.stringify(state.done));}
+function saveMath(){lsSet(K.math,JSON.stringify(state.math));}
+
+/* ---------- phase data ---------- */
+var PHASES=[
+ {id:'ground',icon:'&#9873;',fl:'FL050',name:'Ground Crew',ageStart:11,ageLbl:'Age 11&ndash;13',grade:'Middle school &middot; JSS3 &rarr; US',
+  scrip:{t:'Write the vision, and make it plain upon tables, that he may run that readeth it.',r:'Habakkuk 2:2'},
+  items:[{id:'g1',t:'Finish JSS3 / BECE strong, then settle into your new school.'},
+   {id:'g2',t:'Join Civil Air Patrol as a cadet.',n:'You are eligible at 12 &mdash; start now.'},
+   {id:'g3',t:'Take a free EAA Young Eagles intro flight with a real pilot.'},
+   {id:'g4',t:'Start a flight simulator and learn the pilot phonetic alphabet.'},
+   {id:'g5',t:'Read strong, and begin the Math Ladder (Pre-Algebra).'}]},
+ {id:'runway',icon:'&#128640;',fl:'FL120',name:'On the Runway',ageStart:13,ageLbl:'Age 13&ndash;15',grade:'Roughly grades 8&ndash;9',
+  scrip:{t:'Seest thou a man diligent in his business? he shall stand before kings.',r:'Proverbs 22:29'},
+  items:[{id:'r1',t:'Master Algebra 1 &mdash; the STEM gateway.',n:'The make-or-break year for math.'},
+   {id:'r2',t:'Get a free AOPA student membership (ages 13+).'},
+   {id:'r3',t:'Begin Private Pilot ground-school reading.'},
+   {id:'r4',t:'Attend the OBAP Columbus ACE Academy or an aviation summer camp.'},
+   {id:'r5',t:'Keep science and English strong.'}]},
+ {id:'liftoff',icon:'&#10024;',fl:'FL200',name:'Liftoff',ageStart:16,ageLbl:'Age 16',grade:'Roughly grade 10',
+  scrip:{t:'Be strong and of a good courage; be not afraid... for the LORD thy God is with thee whithersoever thou goest.',r:'Joshua 1:9'},
+  items:[{id:'l1',t:'Pass the FAA 3rd-class medical exam.'},
+   {id:'l2',t:'Earn your Student Pilot Certificate.'},
+   {id:'l3',t:'Fly your FIRST SOLO. \u2708',n:'The FAA lets you solo at 16.'},
+   {id:'l4',t:'Pass the FAA Private Pilot written exam.',n:'The key that unlocks scholarships.'},
+   {id:'l5',t:'Apply for the ages 16&ndash;18 flight scholarships.'}]},
+ {id:'private',icon:'&#128371;',fl:'FL280',name:'Private Pilot',ageStart:17,ageLbl:'Age 17',grade:'Roughly grade 11',
+  scrip:{t:'They that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles.',r:'Isaiah 40:31'},
+  items:[{id:'p1',t:'Earn your Private Pilot License (PPL).',n:'Your wings.'},
+   {id:'p2',t:'Get into the OSU Airport aviation academy track.'},
+   {id:'p3',t:'Compare the university (R-ATP) vs. accelerated route.'},
+   {id:'p4',t:'Chase OBAP and Women in Aviation scholarships.'}]},
+ {id:'climb',icon:'&#128200;',fl:'FL350',name:'The Professional Climb',ageStart:18,ageLbl:'Age 18&ndash;20',grade:'College / flight training',
+  scrip:{t:'Commit thy works unto the LORD, and thy thoughts shall be established.',r:'Proverbs 16:3'},
+  items:[{id:'c1',t:'Pass the FAA 2nd-class medical.'},
+   {id:'c2',t:'Earn your Instrument Rating.'},
+   {id:'c3',t:'Earn your Commercial Pilot License (you can at 18).'},
+   {id:'c4',t:'Add a Multi-Engine Rating.'},
+   {id:'c5',t:'Become a Certified Flight Instructor (CFI).'},
+   {id:'c6',t:'Consider an approved aviation university (like OSU).'}]},
+ {id:'deck',icon:'&#128737;',fl:'FL410',name:'The Flight Deck',ageStart:21,ageLbl:'Age 21&ndash;23',grade:'Airline pilot',
+  scrip:{t:'Not by might, nor by power, but by my spirit, saith the LORD of hosts.',r:'Zechariah 4:6'},
+  items:[{id:'d1',t:'Earn your FAA 1st-class medical.'},
+   {id:'d2',t:'Build to 1,000&ndash;1,500 flight hours.'},
+   {id:'d3',t:'Restricted ATP &rarr; fly as an Airline First Officer at 21.'},
+   {id:'d4',t:'Complete the ATP-CTP course.'},
+   {id:'d5',t:'Earn your full ATP &rarr; make Captain at 23.'}]},
+ {id:'owner',icon:'&#9733;',fl:'ORBIT',name:'The Owner\u2019s Suite',ageStart:24,ageLbl:'Age 24+',grade:'Airline owner',
+  scrip:{t:'Prepare thy work without, and make it fit for thyself in the field; and afterwards build thine house.',r:'Proverbs 24:27'},
+  items:[{id:'o1',t:'Fly the line &mdash; learn Part 121 operations from the inside.'},
+   {id:'o2',t:'Earn the boardroom skill: a business or finance degree / MBA.'},
+   {id:'o3',t:'Rise into leadership: Chief Pilot &rarr; Director of Operations.'},
+   {id:'o4',t:'Pursue an FAA Air Carrier Certificate.'},
+   {id:'o5',t:'Build the team, raise capital &mdash; and found your airline.'}]}
+];
+
+/* ---------- briefings ---------- */
+var CAP_ADDR='Beightler Armory, 2825 W Dublin Granville Rd, Columbus, OH 43235';
+var OSU_ADDR='The Ohio State University Airport (KOSU), Columbus, OH 43235';
+var BRIEFS={
+ g1:{why:'Your Nigerian JSS3 work still counts. A strong finish and clean transcripts help you land in the right grade and the right math track in the US.',
+  facts:[['Credential','JSS3 maps to about US Grade 9.'],['Reality','A mastery school may place you by exam, not age &mdash; bring your transcripts.']],
+  how:['Request your JSS/BECE transcripts before you travel.','Ask the new school for a placement test.','Push to be placed into the highest math you can truly hold.']},
+ g2:{why:'Civil Air Patrol is the Air Force\u2019s youth program. It is your single best on-ramp right now: leadership, aerospace lessons, and real orientation flights in a Cessna.',
+  facts:[['Meets','Tuesdays 7:00&ndash;9:15 PM'],['Where',CAP_ADDR],['Ages','Cadets 12&ndash;21']],
+  how:['Call ahead to pre-arrange your first visit (they meet on a base).','Dress neat and bring a parent.','Ask about the cadet orientation flights.'],
+  ask:['How do I earn my first orientation flight?','What does the cadet promotion path look like?','Are there aviation scholarships for cadets?'],
+  map:{lat:40.1044,lng:-83.0975,addr:CAP_ADDR},
+  links:[['Columbus Composite Squadron','https://columbuscomposite.org']]},
+ g3:{why:'The first time the wheels leave the runway changes everything. EAA Young Eagles gives young people that first flight for free.',
+  facts:[['Cost','Free'],['Near you','Events at the OSU Airport']],
+  how:['Register on the EAA Young Eagles page.','Watch for central-Ohio events at OSU Airport.','Bring your parent&rsquo;s consent.'],
+  links:[['Find a free flight','https://www.eaa.org/eaa/youth/free-ye-flights-for-youth']]},
+ g4:{why:'Pilots speak a special alphabet so letters are never confused over the radio. Learn it now &mdash; it is free and it makes you feel like a pilot on day one.',
+  quiz:[{q:'On the radio, the letter \u201cP\u201d is spoken as:',opts:['Peter','Papa','Panther'],a:1,ex:'P is \u201cPapa\u201d in the ICAO phonetic alphabet.'},
+   {q:'The letter \u201cR\u201d is spoken as:',opts:['Romeo','Robert','River'],a:0,ex:'R is \u201cRomeo.\u201d'}],
+  how:['Install a free flight simulator to practice.','Memorize Alfa, Bravo, Charlie... through Zulu.']},
+ g5:{why:'Everything in flying runs on math and clear reading. Start the Math Ladder at Pre-Algebra and keep your reading strong.',
+  links:[['Khan Academy Pre-Algebra','https://www.khanacademy.org/math/pre-algebra']]},
+
+ r1:{why:'Algebra 1 is the gateway. Solving for an unknown is exactly what a pilot does when working out fuel, weight, and time.',
+  quiz:[{q:'You burn 8 gallons of fuel each hour. For a 3-hour flight plus 1 hour of reserve, how much fuel do you need?',opts:['24 gallons','32 gallons','16 gallons'],a:1,ex:'8 gallons \u00d7 4 hours = 32 gallons. That is algebra in the cockpit.'}],
+  links:[['Khan Academy Algebra 1','https://www.khanacademy.org/math/algebra']]},
+ r2:{why:'AOPA is the world\u2019s largest pilot community. A free student membership gives you flight-planning tools, real CFIs to answer questions, and access to scholarships.',
+  facts:[['Cost','Free'],['Ages','13&ndash;18']],
+  links:[['Join AOPA (free)','https://www.aopa.org/'],['AOPA You Can Fly','https://youcanfly.aopa.org/high-school']]},
+ r3:{why:'You can start learning the ground knowledge for your Private Pilot license years before you fly. Begin reading now so the written exam is easy later.',
+  links:[['Sporty\u2019s Learn to Fly','https://www.sportys.com/learn-to-fly'],['King Schools','https://www.kingschools.com/']]},
+ r4:{why:'OBAP &mdash; the Organization of Black Aerospace Professionals &mdash; runs the ACE Academy to open aviation to students like you. This community is built for a young Black girl aiming at the flight deck.',
+  facts:[['Ages','12&ndash;18'],['Selection','Age, GPA and essay']],
+  how:['Apply on the OBAP Columbus ACE page.','Write your essay early &mdash; tell them your airline dream.'],
+  links:[['OBAP Columbus ACE','https://obap.org/ace/columbus']]},
+ r5:{why:'Biology, chemistry and physics carry the science of flight, and clear English carries the radio calls and the exams. Keep both strong.'},
+
+ l1:{why:'Before you can fly solo you need an FAA medical certificate. Good news: if your eyesight corrects to 20/20 with glasses, you qualify.',
+  facts:[['Type','3rd-class medical'],['Vision','Correctable to 20/20 is fine']],
+  how:['Find an FAA Aviation Medical Examiner (AME).','Fill out FAA MedXPress online first.','Bring glasses/contacts if you use them.'],
+  links:[['Find an AME','https://www.faa.gov/pilots/amelocator']]},
+ l2:{why:'The Student Pilot Certificate is your permission to train and fly solo. You apply for it online through the FAA IACRA system.',
+  how:['Create an IACRA account.','Have your instructor submit the application.','Wait for the certificate in the mail.']},
+ l3:{moment:{i:'\u2708',h:'Your first solo',p:'Just you, the airplane, and the sky. Age 16 unlocks it.'},
+  why:'The first time you fly alone is a milestone every pilot remembers forever.',
+  facts:[['Age','16 minimum to solo'],['Needs','Medical + student certificate + instructor endorsement']]},
+ l4:{why:'The Private Pilot written (knowledge) exam tests the ground knowledge. Passing it early is the secret key &mdash; most big flight scholarships require it before they release money.',
+  quiz:[{q:'What are the four forces acting on an airplane in flight?',opts:['Push, pull, spin, glide','Lift, weight, thrust, drag','Speed, height, fuel, wind'],a:1,ex:'Lift, weight, thrust and drag &mdash; the four forces of flight.'},
+   {q:'A steady green light from the control tower to an aircraft on the ground means:',opts:['Cleared for takeoff','Stop','Return to start'],a:0,ex:'Steady green on the ground = cleared for takeoff.'}],
+  links:[['Sporty\u2019s test prep','https://www.sportys.com/learn-to-fly'],['AOPA free HS curriculum','https://youcanfly.aopa.org/high-school']]},
+ l5:{why:'Once you pass the written exam, real money opens up. Dozens of scholarships fund teenagers aged 16&ndash;18 through their Private Pilot license.',
+  cost:{intro:'Typical scholarship awards for high-school students:',rows:[['AOPA scholarships',2500,10000],['EAA Ray Foundation',0,11000],['Museum / Hiller awards',12000,15000]],note:'Most require you to pass the Private Pilot written exam first. Apply to several.'},
+  links:[['AOPA scholarships','https://www.aopa.org/training-and-safety/students/aopa-flight-training-scholarships']]},
+
+ p1:{moment:{i:'&#128371;',h:'Private Pilot License',p:'You are now a real pilot &mdash; pilot in command.'},
+  why:'The PPL is your wings: you can fly single-engine airplanes and carry passengers.',
+  cost:{intro:'What the Private Pilot license costs:',rows:[['Private Pilot License',10000,18000]],note:'Around 40&ndash;70 flight hours. Scholarships can cover much of this.'},
+  facts:[['Age','17 to earn the license'],['Medical','3rd-class']]},
+ p2:{why:'The Aviation Academy at the OSU Airport (run through Dublin\u2019s Emerald Campus) lets high-schoolers train two days a week at a real airport and earn the FAA Part 107 drone certificate.',
+  facts:[['Grades','10&ndash;12'],['Seats','Limited seats for Columbus, Hilliard, Worthington'],['Credential','FAA Remote Pilot (Part 107)']],
+  how:['Aim your high-school choice toward a partner district.','Ask a counselor about the OSU Airport cohort.'],
+  map:{lat:40.0798,lng:-83.0730,addr:OSU_ADDR},
+  links:[['Aviation Academy','https://emerald.dublinschools.net/programs/academies/aviation']]},
+ p3:{why:'Two routes reach the airlines. A university aviation program lets you fly for an airline sooner (Restricted ATP at 21). An accelerated flight school is faster and cheaper but reaches the full ATP at 23.',
+  cost:{intro:'The full journey, zero to airline-ready:',rows:[['Part 61 accelerated',48000,86000],['University (Part 141)',80000,120000]],note:'University route: R-ATP at 1,000&ndash;1,250 hours and age 21. Standard route: 1,500 hours and age 23.'},
+  links:[['OSU Center for Aviation Studies','https://aviation.osu.edu']]},
+ p4:{why:'Two communities exist to fund pilots like you. OBAP supports Black aerospace professionals; Women in Aviation and the Ninety-Nines fund women flying to the top.',
+  links:[['OBAP','https://obap.org'],['Women in Aviation','https://www.wai.org'],['The Ninety-Nines','https://www.ninety-nines.org']]},
+
+ c1:{why:'To fly for pay you step up to a 2nd-class medical certificate &mdash; a slightly stricter version of the one you already hold.'},
+ c2:{why:'The Instrument Rating teaches you to fly in clouds and low visibility using only your instruments. It is also required before the ATP.',
+  cost:{intro:'Instrument Rating:',rows:[['Instrument Rating',8000,15000]],note:'Adds 40&ndash;60 hours. Train for it right after your PPL.'}},
+ c3:{why:'The Commercial Pilot License lets you legally be paid to fly. You can earn it at 18.',
+  cost:{intro:'Commercial Pilot License:',rows:[['Commercial certificate',15000,25000]],note:'Requires higher skill and more hours than the PPL.'}},
+ c4:{why:'A Multi-Engine Rating qualifies you for airplanes with more than one engine &mdash; standard for airline aircraft.',
+  cost:{intro:'Multi-Engine add-on:',rows:[['Multi-Engine Rating',5000,10000]]}},
+ c5:{why:'Becoming a Certified Flight Instructor is how most pilots build hours toward the airlines &mdash; you get paid to teach while you log flight time.',
+  cost:{intro:'CFI certificate:',rows:[['CFI training',5000,10000]],note:'Then you earn income while building toward 1,500 hours.'},
+  links:[['About the CFI path','https://www.aopa.org/training-and-safety/students']]},
+ c6:{why:'An FAA-approved aviation university &mdash; like OSU right here in Columbus &mdash; can qualify you for a Restricted ATP with fewer hours, getting you to an airline job faster.',
+  links:[['OSU Aviation','https://aviation.osu.edu']]},
+
+ d1:{why:'Airline pilots hold the 1st-class medical &mdash; the highest standard. You renew it regularly through your career.'},
+ d2:{why:'The airlines want experience. You build to 1,500 hours (or 1,000&ndash;1,250 through an approved university) by instructing, towing banners, flying cargo, and more.',
+  facts:[['Standard ATP','1,500 hours'],['R-ATP (university)','1,000&ndash;1,250 hours']]},
+ d3:{why:'With a Restricted ATP you can fly as an airline First Officer at just 21 &mdash; sitting in the right seat of a real airliner.'},
+ d4:{why:'The ATP-CTP is the training course you complete before the ATP exam, including time in a full-motion airline simulator. Airlines often pay for it.',
+  facts:[['Cost','About $6,000'],['Often','Covered by the hiring airline']]},
+ d5:{moment:{i:'&#128737;',h:'Airline Captain',p:'Four stripes. The left seat. You command the aircraft.'},
+  why:'At 23, with your full ATP, you can make Captain. It is also one of the best-paid careers there is.',
+  facts:[['Age','23 for full ATP'],['Median pay','About $198,000 (US airline pilots, 2024)']]},
+
+ o1:{why:'You cannot run an airline you have never lived inside. Years flying the line teach you Part 121 operations from the cockpit out.'},
+ o2:{why:'Owning an airline is roughly 20% flying and 80% economics, safety systems and people. A business or finance degree, then an MBA, gives you the boardroom skill.'},
+ o3:{why:'Move from the cockpit into management &mdash; Chief Pilot, then Director of Operations &mdash; to learn how an airline is actually run day to day.'},
+ o4:{why:'This is the legal key. No one carries the public without an FAA Air Carrier Certificate under Part 121. It is earned through a rigorous multi-phase FAA process proving your airline is safe.',
+  facts:[['What','FAA Air Carrier Certificate (Part 121)'],['Why','The license to fly passengers for hire']],
+  links:[['FAA air carrier certification','https://www.faa.gov']]},
+ o5:{moment:{i:'&#9733;',h:'Found your airline',p:'From first officer to founder. To God be the glory.'},
+  why:'The vision you wrote as a girl becomes a company: a business plan, investors, a team, and aircraft with your name on the tail.',
+  how:['Write the business plan.','Raise capital and gather investors.','Assemble your crew and earn the certificate.'],
+  scrip:{t:'But thou shalt remember the LORD thy God: for it is he that giveth thee power to get wealth.',r:'Deuteronomy 8:18'}}
+};
+
+/* math briefs */
+var MATH=[
+ {id:'m1',h:'Pre-Algebra',w:'Number sense: fuel, weight, time and distance.',brief:{why:'The foundation. Fractions, ratios and percentages are how pilots handle fuel and weight.',links:[['Khan Pre-Algebra','https://www.khanacademy.org/math/pre-algebra']]}},
+ {id:'m2',h:'Algebra 1',w:'Solve for the unknown \u2014 like solving for fuel burn.',gate:true,brief:{why:'The gateway to every STEM path. Solving for x is solving for fuel, time and distance.',links:[['Khan Algebra 1','https://www.khanacademy.org/math/algebra']]}},
+ {id:'m3',h:'Geometry',w:'Angles, headings and the shapes of airspace.',brief:{why:'Headings, angles and shapes &mdash; the geometry of navigation and airspace.',links:[['Khan Geometry','https://www.khanacademy.org/math/geometry']]}},
+ {id:'m4',h:'Algebra 2',w:'The functions behind performance charts.',brief:{why:'Functions and graphs are how aircraft performance charts work.',links:[['Khan Algebra 2','https://www.khanacademy.org/math/algebra2']]}},
+ {id:'m5',h:'Pre-Calculus',w:'Trigonometry for navigation: sines, cosines, courses.',brief:{why:'Trigonometry powers navigation &mdash; courses, wind angles and distances.',links:[['Khan Trigonometry','https://www.khanacademy.org/math/trigonometry']]}},
+ {id:'m6',h:'Calculus',w:'Rates of change: climb, descent and lift.',brief:{why:'Calculus describes rates of change &mdash; climb, descent and the physics of lift.',links:[['Khan Calculus','https://www.khanacademy.org/math/calculus-1']]}},
+ {id:'m7',h:'Physics',w:'The four forces of flight: lift, weight, thrust, drag.',brief:{why:'Physics is flight itself: lift, weight, thrust and drag, and how they balance.',links:[['Khan Physics','https://www.khanacademy.org/science/physics']]}}
+];
+
+var LAUNCH=[
+ {now:true,h:'Civil Air Patrol \u2014 Columbus Composite Squadron (OH-139)',tag:'Do this now \u00b7 eligible at 12',p:'The official youth auxiliary of the U.S. Air Force. Cadets learn leadership, aerospace, and fly orientation flights in a real Cessna.',facts:['Meets Tuesdays 7:00&ndash;9:15 PM','Beightler Armory, 2825 W Dublin Granville Rd, Columbus OH 43235','Cadets ages 12&ndash;21'],href:'https://columbuscomposite.org',cta:'Visit the squadron'},
+ {h:'OBAP Columbus ACE Academy',tag:'Ages 12\u201318 \u00b7 apply',p:'Organization of Black Aerospace Professionals. A multi-day academy exposing students to every aviation career.',facts:['Boys and girls 12&ndash;18','Selected by age, GPA and essay'],href:'https://obap.org/ace/columbus',cta:'See ACE Columbus'},
+ {h:'EAA Young Eagles \u2014 free first flight',tag:'Free \u00b7 any age',p:'A free introductory flight with a pilot, with central-Ohio events at the OSU Airport.',facts:['Completely free','Your very first time in the air'],href:'https://www.eaa.org/eaa/youth/free-ye-flights-for-youth',cta:'Find a flight'},
+ {h:'Aviation Academy at the OSU Airport',tag:'Aim your high school here \u00b7 grades 10\u201312',p:'Students spend two days a week at the airport and earn the FAA Part 107 certificate. Limited seats for Columbus, Hilliard and Worthington students.',facts:['Grades 10&ndash;12, real airport','Free shuttle from home high schools','FAA Remote Pilot (Part 107)'],href:'https://emerald.dublinschools.net/programs/academies/aviation',cta:'See the academy'},
+ {h:'OSU Center for Aviation Studies',tag:'The college anchor \u00b7 in Columbus',p:'A full collegiate aviation program right here in town \u2014 a natural R-ATP path close to home.',facts:['Professional pilot degree track','On the OSU campus'],href:'https://aviation.osu.edu',cta:'Explore OSU Aviation'},
+ {h:'AOPA \u2014 free student membership & STEM',tag:'Free \u00b7 ages 13\u201318',p:'Free student membership and a free high-school aviation STEM curriculum your school can adopt.',facts:['Free tools & CFI help','Over $1M in flight training scholarships'],href:'https://youcanfly.aopa.org/high-school',cta:'Start with AOPA'}
+];
+
+var DREAM=[
+ {h:'Fly the line',p:'Spend real years as an airline pilot. You cannot run a Part 121 operation you have never lived inside.'},
+ {h:'Earn the boardroom skill',p:'A business or finance degree, then an MBA. Owning an airline is 20% flying and 80% economics, safety systems and people.'},
+ {h:'Rise into leadership',p:'Move from the cockpit into management: Chief Pilot, then Director of Operations.'},
+ {h:'Learn the money',p:'Aircraft leasing and financing, route economics, crew scheduling, maintenance. Where airlines are won or lost.'},
+ {h:'Get the legal key',p:'Pursue an FAA Air Carrier Certificate under Part 121. No one owns an airline without it.'},
+ {h:'Build the team & raise capital',p:'Write the business plan, gather investors, and assemble your crew.'},
+ {h:'Found your airline',p:'From first officer to founder. To God be the glory.'}
+];
+
+/* ---------- helpers ---------- */
+function el(id){return document.getElementById(id);}
+function totalItems(){var n=0;for(var i=0;i<PHASES.length;i++){n+=PHASES[i].items.length;}return n;}
+function doneCount(){var n=0;for(var k in state.done){if(state.done[k]){n++;}}return n;}
+function mathCount(){var n=0;for(var k in state.math){if(state.math[k]){n++;}}return n;}
+function currentPhaseIndex(){var idx=0;for(var i=0;i<PHASES.length;i++){if(state.age>=PHASES[i].ageStart){idx=i;}}return idx;}
+function tailNumber(){var s=(state.name||'').toUpperCase().replace(/[^A-Z]/g,'');var suf=s.length>=2?s.substring(0,2):'PW';return 'N'+(state.age*10+7)+suf;}
+function findItem(id){for(var i=0;i<PHASES.length;i++){for(var j=0;j<PHASES[i].items.length;j++){if(PHASES[i].items[j].id===id){return {ph:PHASES[i],it:PHASES[i].items[j]};}}}return null;}
+function esc(s){return String(s);}
+
+/* ---------- render main ---------- */
+function renderHero(){
+  el('heroName').innerHTML=state.name?state.name:'&nbsp;';
+  el('tail').innerHTML=tailNumber();
+  el('heroAir').innerHTML=state.air?('Future home of &ldquo;'+state.air+'&rdquo;'):'Name your airline in the Parent tab';
+  var pct=Math.round((doneCount()/totalItems())*100);
+  el('pct').innerHTML=pct+'%';el('barFill').style.width=pct+'%';
+}
+function renderPath(){
+  var box=el('legs');box.innerHTML='';var cur=currentPhaseIndex();
+  for(var i=0;i<PHASES.length;i++){
+    var ph=PHASES[i];var allDone=true;
+    for(var j=0;j<ph.items.length;j++){if(!state.done[ph.items[j].id]){allDone=false;break;}}
+    var leg=document.createElement('div');leg.className='leg'+(allDone?' done':'');
+    var here=(i===cur)?'<span class="here">&#9992; YOU ARE HERE</span>':'';
+    var itemsHtml='';
+    for(var k=0;k<ph.items.length;k++){
+      var it=ph.items[k];var on=state.done[it.id]?' tick':'';
+      itemsHtml+='<div class="item'+on+'" data-id="'+it.id+'"><span class="box" data-box="1"></span>'+
+        '<span class="txt">'+it.t+(it.n?'<span class="note">'+it.n+'</span>':'')+'</span><span class="chev">&#8250;</span></div>';
+    }
+    leg.innerHTML='<div class="spine"></div><div class="node">'+ph.icon+'</div>'+here+
+      '<div class="card'+(allDone?' cleared':'')+'"><span class="fl">'+ph.fl+'</span><h3>'+ph.name+'</h3>'+
+      '<div class="meta">'+ph.ageLbl+' &middot; <em>'+ph.grade+'</em></div>'+itemsHtml+
+      '<div class="scrip"><p>&ldquo;'+ph.scrip.t+'&rdquo;</p><b>'+ph.scrip.r+'</b>'+
+      '<button class="say" data-say="'+encodeURIComponent(ph.scrip.t)+'">&#9654; Read aloud</button></div>'+
+      '<span class="stamp">Cleared</span></div>';
+    box.appendChild(leg);
+  }
+  bindItems();bindSay();
+}
+function renderMath(){
+  var box=el('rungs');box.innerHTML='';
+  for(var i=0;i<MATH.length;i++){
+    var m=MATH[i];var on=state.math[m.id]?' tick':'';
+    var d=document.createElement('div');d.className='item'+on;d.setAttribute('data-math',m.id);
+    d.innerHTML='<span class="box" data-box="1"></span><span class="txt"><span class="rung-h">'+m.h+
+      (m.gate?'<span class="gate">Gateway</span>':'')+'</span><span class="why">'+m.w+'</span></span><span class="chev">&#8250;</span>';
+    box.appendChild(d);
+  }
+  bindMath();
+}
+function renderLaunch(){
+  var box=el('resList');box.innerHTML='';
+  for(var i=0;i<LAUNCH.length;i++){
+    var r=LAUNCH[i];var f='';for(var j=0;j<r.facts.length;j++){f+='<p class="fact">'+r.facts[j]+'</p>';}
+    var d=document.createElement('div');d.className='res';
+    d.innerHTML=(r.now?'<span class="now">This month</span>':'')+'<h4>'+r.h+'</h4><div class="tagline">'+r.tag+'</div><p>'+r.p+'</p>'+f+
+      '<a href="'+r.href+'" target="_blank" rel="noopener">'+r.cta+' &rarr;</a>';
+    box.appendChild(d);
+  }
+}
+function renderDream(){
+  var box=el('dreamSteps');box.innerHTML='';
+  for(var i=0;i<DREAM.length;i++){var s=DREAM[i];var d=document.createElement('div');d.className='dstep';
+    d.innerHTML='<span class="num">'+(i+1)+'</span><h5>'+s.h+'</h5><p>'+s.p+'</p>';box.appendChild(d);}
+}
+function renderParentStats(){el('pDone').innerHTML=doneCount()+' / '+totalItems();el('pMath').innerHTML=mathCount()+' / '+MATH.length;el('ageSet').value=state.age;}
+
+/* ---------- brief builder ---------- */
+function buildBlocks(b){
+  var h='';
+  if(b.moment){h+='<div class="moment"><div class="mi">'+b.moment.i+'</div><h4>'+b.moment.h+'</h4><p>'+b.moment.p+'</p></div>';}
+  if(b.why){h+='<div class="blk"><p class="blk-h">&#9992; Why it matters</p><p>'+b.why+'</p></div>';}
+  if(b.facts){var fh='';for(var i=0;i<b.facts.length;i++){fh+='<div class="factline"><b>'+b.facts[i][0]+':</b><span>'+b.facts[i][1]+'</span></div>';}
+    h+='<div class="blk"><p class="blk-h">&#9873; Key facts</p>'+fh+'</div>';}
+  if(b.how){var oh='';for(var i2=0;i2<b.how.length;i2++){oh+='<li>'+b.how[i2]+'</li>';}
+    h+='<div class="blk"><p class="blk-h">&#10141; How to do it</p><ol>'+oh+'</ol></div>';}
+  if(b.ask){var ah='';for(var i3=0;i3<b.ask.length;i3++){ah+='<li>'+b.ask[i3]+'</li>';}
+    h+='<div class="blk"><p class="blk-h">&#128172; Questions to ask</p><ol>'+ah+'</ol></div>';}
+  if(b.cost){h+=buildCost(b.cost);}
+  if(b.quiz){h+=buildQuiz(b.quiz);}
+  if(b.map){h+=buildMap(b.map);}
+  if(b.links){var lh='';for(var i4=0;i4<b.links.length;i4++){lh+='<a class="lnk" href="'+b.links[i4][1]+'" target="_blank" rel="noopener">'+b.links[i4][0]+'</a>';}
+    h+='<div class="blk"><p class="blk-h">&#128279; Go further</p>'+lh+'</div>';}
+  if(b.scrip){h+='<div class="brief-scrip"><p>&ldquo;'+b.scrip.t+'&rdquo;</p><b>'+b.scrip.r+'</b></div>';}
+  return h;
+}
+function buildCost(c){
+  var max=0,i;for(i=0;i<c.rows.length;i++){if(c.rows[i][2]>max){max=c.rows[i][2];}}
+  var rows='';for(i=0;i<c.rows.length;i++){
+    var lo=c.rows[i][1],hi=c.rows[i][2];var w=max?Math.round((hi/max)*100):0;
+    var amt=(lo>0?'$'+fmt(lo)+'&ndash;$'+fmt(hi):'up to $'+fmt(hi));
+    rows+='<div class="costrow"><div class="cl"><span>'+c.rows[i][0]+'</span><b>'+amt+'</b></div><div class="costbar"><i style="width:'+w+'%"></i></div></div>';
+  }
+  var note=c.note?'<p class="cost-note">'+c.note+'</p>':'';
+  var intro=c.intro?'<p style="font-size:14px;color:#dce6f0;margin:0 0 12px;line-height:1.5">'+c.intro+'</p>':'';
+  return '<div class="blk"><p class="blk-h">&#128176; Cost breakdown</p>'+intro+rows+note+'</div>';
+}
+function fmt(n){return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,',');}
+function buildQuiz(qs){
+  var h='<div class="blk"><p class="blk-h">&#127919; Quick quiz</p>';
+  for(var i=0;i<qs.length;i++){
+    var q=qs[i];var opts='';
+    for(var j=0;j<q.opts.length;j++){opts+='<button class="opt" data-q="'+i+'" data-o="'+j+'" data-a="'+q.a+'">'+q.opts[j]+'</button>';}
+    h+='<div class="q"><div class="qq">'+q.q+'</div>'+opts+'<div class="qex" data-ex="'+i+'">'+q.ex+'</div></div>';
+  }
+  return h+'</div>';
+}
+function buildMap(m){
+  var b0=(m.lng-0.012),b1=(m.lat-0.008),b2=(m.lng+0.012),b3=(m.lat+0.008);
+  var src='https://www.openstreetmap.org/export/embed.html?bbox='+b0+','+b1+','+b2+','+b3+'&layer=mapnik&marker='+m.lat+','+m.lng;
+  var g='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(m.addr);
+  return '<div class="blk"><p class="blk-h">&#128205; Where it is</p><iframe class="map" loading="lazy" src="'+src+'"></iframe>'+
+    '<p style="font-size:13px;color:#bcd2e5;margin:9px 0 0">'+m.addr+'</p><a class="maplink" href="'+g+'" target="_blank" rel="noopener">Open in Google Maps</a></div>';
+}
+function fallbackBrief(it,ph){return {why:it.t.replace(/<[^>]+>/g,''),scrip:ph.scrip};}
+
+/* ---------- brief open/close ---------- */
+var BRIEF_OPEN=null,BRIEF_KIND=null,PUSHED=false;
+function openBrief(id,kind){
+  var data,fl,title,meta,b;
+  if(kind==='math'){
+    for(var i=0;i<MATH.length;i++){if(MATH[i].id===id){data=MATH[i];}}
+    b=data.brief||{why:data.w};fl='MATH';title=data.h;meta='Math Ladder &middot; the spine of flight';
+  }else{
+    var f=findItem(id);b=BRIEFS[id]||fallbackBrief(f.it,f.ph);fl=f.ph.fl;
+    title=f.it.t.replace(/\s*\u2708/,'');meta=f.ph.name+' &middot; '+f.ph.ageLbl;
+    if(!b.scrip){/* phase scripture shown via card, keep briefs focused */}
+  }
+  el('briefFl').innerHTML=fl;
+  el('briefBody').innerHTML='<div class="brief-eyebrow">Flight briefing</div><h1 class="brief-title">'+title+'</h1>'+
+    '<div class="brief-meta">'+meta+'</div>'+buildBlocks(b);
+  el('briefBody').scrollTop=0;
+  var done=(kind==='math')?state.math[id]:state.done[id];
+  setCompleteBtn(done);
+  BRIEF_OPEN=id;BRIEF_KIND=kind;
+  var sc=el('brief');sc.className='brief-screen open';sc.setAttribute('aria-hidden','false');
+  bindQuiz();
+  try{if(!PUSHED){history.pushState({brief:1},'');PUSHED=true;}}catch(e){}
+}
+function closeBrief(fromPop){
+  var sc=el('brief');sc.className='brief-screen';sc.setAttribute('aria-hidden','true');
+  BRIEF_OPEN=null;BRIEF_KIND=null;
+  renderHero();renderPath();renderMath();renderParentStats();
+  if(!fromPop&&PUSHED){try{history.back();}catch(e){}PUSHED=false;}
+  else{PUSHED=false;}
+}
+function setCompleteBtn(done){
+  var btn=el('completeBtn');
+  if(done){btn.className='complete-btn did';btn.innerHTML='&#10003; Completed &mdash; tap to undo';}
+  else{btn.className='complete-btn todo';btn.innerHTML='Mark complete';}
+}
+
+/* ---------- interactions ---------- */
+function bindItems(){
+  var items=document.querySelectorAll('#legs .item');
+  for(var i=0;i<items.length;i++){
+    items[i].addEventListener('click',function(e){
+      var id=this.getAttribute('data-id');
+      var t=e.target;
+      if(t&&t.getAttribute&&t.getAttribute('data-box')==='1'){toggleDone(id);return;}
+      openBrief(id,'path');
+    });
+  }
+}
+function toggleDone(id){
+  var nowOn=!state.done[id];state.done[id]=nowOn;saveDone();
+  renderHero();renderPath();
+  if(nowOn){burst();phaseCheck(id);}
+}
+function phaseCheck(id){
+  for(var i=0;i<PHASES.length;i++){var ph=PHASES[i];var mine=false,all=true;
+    for(var j=0;j<ph.items.length;j++){if(ph.items[j].id===id){mine=true;}if(!state.done[ph.items[j].id]){all=false;}}
+    if(mine){if(all){toast(ph.name+' &mdash; CLEARED! \u2708');bigBurst();}else{toast('Logged. Keep climbing.');}return;}}
+}
+function bindMath(){
+  var items=document.querySelectorAll('#rungs .item');
+  for(var i=0;i<items.length;i++){
+    items[i].addEventListener('click',function(e){
+      var id=this.getAttribute('data-math');var t=e.target;
+      if(t&&t.getAttribute&&t.getAttribute('data-box')==='1'){toggleMath(id);return;}
+      openBrief(id,'math');
+    });
+  }
+}
+function toggleMath(id){var nowOn=!state.math[id];state.math[id]=nowOn;saveMath();renderMath();if(nowOn){burst();toast('Rung climbed! \u2708');}}
+function bindSay(){
+  var btns=document.querySelectorAll('.say');
+  for(var i=0;i<btns.length;i++){btns[i].addEventListener('click',function(e){e.stopPropagation();safeSpeak(decodeURIComponent(this.getAttribute('data-say')));});}
+}
+function bindQuiz(){
+  var opts=el('briefBody').querySelectorAll('.opt');
+  for(var i=0;i<opts.length;i++){
+    opts[i].addEventListener('click',function(){
+      var qi=this.getAttribute('data-q');var chosen=parseInt(this.getAttribute('data-o'),10);var ans=parseInt(this.getAttribute('data-a'),10);
+      var group=el('briefBody').querySelectorAll('.opt[data-q="'+qi+'"]');
+      for(var j=0;j<group.length;j++){
+        group[j].disabled=true;
+        var oj=parseInt(group[j].getAttribute('data-o'),10);
+        if(oj===ans){group[j].className='opt correct';}
+        else if(oj===chosen){group[j].className='opt wrong';}
+      }
+      var ex=el('briefBody').querySelector('.qex[data-ex="'+qi+'"]');if(ex){ex.className='qex show';}
+      if(chosen===ans){burst();}
+    });
+  }
+}
+function bindComplete(){
+  el('completeBtn').addEventListener('click',function(){
+    if(!BRIEF_OPEN){return;}
+    if(BRIEF_KIND==='math'){
+      var on=!state.math[BRIEF_OPEN];state.math[BRIEF_OPEN]=on;saveMath();setCompleteBtn(on);if(on){bigBurst();toast('Rung climbed! \u2708');}
+    }else{
+      var on2=!state.done[BRIEF_OPEN];state.done[BRIEF_OPEN]=on2;saveDone();setCompleteBtn(on2);
+      if(on2){bigBurst();phaseCheck(BRIEF_OPEN);}
+    }
+  });
+}
+function bindTabs(){
+  var tabs=document.querySelectorAll('#tabs .tab');
+  for(var i=0;i<tabs.length;i++){
+    tabs[i].addEventListener('click',function(){
+      var v=this.getAttribute('data-v');var all=document.querySelectorAll('#tabs .tab');
+      for(var j=0;j<all.length;j++){all[j].className='tab';}this.className='tab on';
+      var views=document.querySelectorAll('.view');for(var k=0;k<views.length;k++){views[k].className='view';}
+      el('v-'+v).className='view on';window.scrollTo(0,0);
+    });
+  }
+}
+function safeSpeak(txt){try{if(!('speechSynthesis' in window)){return;}window.speechSynthesis.cancel();var u=new window.SpeechSynthesisUtterance(txt);u.rate=.92;u.pitch=1.03;window.speechSynthesis.speak(u);}catch(e){}}
+var toastT=null;function toast(m){var t=el('toast');t.innerHTML=m;t.className='show';if(toastT){clearTimeout(toastT);}toastT=setTimeout(function(){t.className='';},2200);}
+
+/* confetti */
+var cvs,ctx,parts=[],raf=null;
+function initFx(){cvs=el('cfx');ctx=cvs.getContext('2d');resizeFx();window.addEventListener('resize',resizeFx);}
+function resizeFx(){if(!cvs){return;}cvs.width=window.innerWidth;cvs.height=window.innerHeight;}
+function spawn(n){var colors=['#E4C877','#C9A24B','#3E7C74','#F2C078','#EAF0F6'];
+  for(var i=0;i<n;i++){parts.push({x:cvs.width/2+(Math.random()-.5)*160,y:cvs.height*.3,vx:(Math.random()-.5)*7,vy:Math.random()*-9-3,g:.24,s:Math.random()*7+4,c:colors[(Math.random()*colors.length)|0],rot:Math.random()*6,vr:(Math.random()-.5)*.4,life:70+Math.random()*30});}
+  if(!raf){tick();}}
+function tick(){ctx.clearRect(0,0,cvs.width,cvs.height);
+  for(var i=parts.length-1;i>=0;i--){var p=parts[i];p.vy+=p.g;p.x+=p.vx;p.y+=p.vy;p.rot+=p.vr;p.life--;
+    ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.fillStyle=p.c;ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*.55);ctx.restore();
+    if(p.life<=0||p.y>cvs.height+30){parts.splice(i,1);}}
+  if(parts.length){raf=window.requestAnimationFrame(tick);}else{raf=null;ctx.clearRect(0,0,cvs.width,cvs.height);}}
+function burst(){spawn(26);}function bigBurst(){spawn(90);}
+
+function makeStars(){var s=el('stars');var html='';for(var i=0;i<46;i++){html+='<i style="top:'+(Math.random()*70)+'%;left:'+(Math.random()*100)+'%;animation-delay:'+(Math.random()*4).toFixed(1)+'s"></i>';}s.innerHTML=html;}
+
+function showApp(){el('cover').style.display='none';el('app').style.display='block';renderAll();}
+function renderAll(){renderHero();renderPath();renderMath();renderLaunch();renderDream();renderParentStats();}
+function beginFlow(){
+  var nm=el('nm').value.replace(/\s+/g,' ').trim();var ar=el('ar').value.replace(/\s+/g,' ').trim();
+  if(!nm){el('nm').focus();el('nm').style.borderColor='#E8A44C';return;}
+  state.name=nm;state.air=ar;lsSet(K.name,nm);lsSet(K.air,ar);lsSet(K.age,String(state.age));
+  showApp();toast('Welcome aboard, Captain '+nm+'! \u2708');bigBurst();
+}
+function bindParent(){
+  el('pinBtn').addEventListener('click',function(){
+    if(el('pin').value==='2020'){el('pgate').className='pgate hide';el('ppanel').className='ppanel';renderParentStats();}
+    else{el('pin').value='';el('pin').placeholder='Try again';el('pin').style.borderColor='#b1442f';}
+  });
+  el('ageSet').addEventListener('change',function(){var a=parseInt(this.value,10);if(a>=8&&a<=40){state.age=a;lsSet(K.age,String(a));renderHero();renderPath();el('tail').innerHTML=tailNumber();}});
+  el('resetBtn').addEventListener('click',function(){if(window.confirm('Reset all progress? Name and airline stay saved.')){state.done={};state.math={};saveDone();saveMath();renderAll();toast('Progress reset. Fresh flight plan.');}});
+}
+function init(){
+  loadState();makeStars();initFx();bindTabs();bindParent();bindComplete();
+  el('begin').addEventListener('click',beginFlow);
+  el('nm').addEventListener('keydown',function(e){if(e.keyCode===13){el('ar').focus();}});
+  el('ar').addEventListener('keydown',function(e){if(e.keyCode===13){beginFlow();}});
+  el('backBtn').addEventListener('click',function(){closeBrief(false);});
+  window.addEventListener('popstate',function(){if(BRIEF_OPEN){closeBrief(true);}});
+  el('editBtn').addEventListener('click',function(){
+    var nm=window.prompt('Captain name:',state.name);if(nm!==null&&nm.replace(/\s+/g,' ').trim()){state.name=nm.replace(/\s+/g,' ').trim();lsSet(K.name,state.name);}
+    var ar=window.prompt('Airline name:',state.air);if(ar!==null){state.air=ar.replace(/\s+/g,' ').trim();lsSet(K.air,state.air);}
+    renderHero();el('tail').innerHTML=tailNumber();
+  });
+  if(state.name){showApp();}
+}
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',init);}else{init();}
+</script>
+</body>
+</html>
